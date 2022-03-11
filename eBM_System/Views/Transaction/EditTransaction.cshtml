@@ -1,0 +1,64 @@
+﻿@model TransactionHistory_VM
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnStat = ViewBag.ResultStatus;
+}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Edit Transaction</h4>
+                        <form class="forms-sample" enctype="multipart/form-data" asp-action="EditTransaction" asp-controller="Transaction" method="post">
+                            <div asp-validation-summary="All" class="text-danger">
+                                <input type="text" class="form-control" asp-for="Id"  placeholder="Amount" hidden>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="Amount">Amount</label>
+                                    <input type="number" class="form-control" asp-for="Amount" min="1" placeholder="Amount">
+                                </div>
+                                <input asp-for="UserId" type="text" hidden />
+                                <div class="form-group col-md-6">
+                                    <label asp-for="TransactionDateTime">Date Time</label>
+                                    <input type="text" class="form-control" asp-for="TransactionDateTime" placeholder="Transaction Date Time (dd-MMM-yyyy hh:mm tt) ">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="TransactionType">Transction Type</label>
+                                    <select asp-for="TransactionType">
+                                        <option value="Select">---Select an Option---</option>
+                                        <option value="@eBM_System.Models.DB_Models.TransactionType.Credit">Credit</option>
+                                        <option value="@eBM_System.Models.DB_Models.TransactionType.Debit">Debit</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary me-2">Update</button>
+                                <button type="button" class="btn btn-light" onclick="window.location.href='../Transaction/TransactionHistory';">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="pageStatus" value="@returnStat" style="display:none" />
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(window).on('load', function () {
+        var stat = $("#pageStatus").val();
+        if (stat == "success") {
+            alert("Transaction info updated successfully.");
+            window.location.href = '../Transaction/TransactionHistory';
+        }
+        else if (stat == "failed") {
+            alert("Failed to update Transaction info.");
+        }
+        else if (stat == "error") {
+            alert("Error while updating Transaction Info.");
+        }
+    });
+</script>

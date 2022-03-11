@@ -1,0 +1,73 @@
+﻿@model AccountInformation_VM
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnStat = ViewBag.ResultStatus;
+}
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add Account Information</h4>
+                        <form class="forms-sample" enctype="multipart/form-data" asp-action="AddAccount" asp-controller="Transaction" method="post">
+                            <div asp-validation-summary="All" class="text-danger">
+                                <div class="form-group col-md-6">
+                                    <label asp-for="AccountNumber">Account Number</label>
+                                    <input type="number" class="form-control" asp-for="AccountNumber" maxlength="8" placeholder="Account Number">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="AccountType">Account Type</label>
+                                    <select asp-for="AccountType">
+                                        <option value="Select">---Select an Option---</option>
+                                        <option value="@eBM_System.Models.DB_Models.AccountType.Debit">Debit</option>
+                                        <option value="@eBM_System.Models.DB_Models.AccountType.Saving">Saving</option>
+                                        <option value="@eBM_System.Models.DB_Models.AccountType.Checking">Checking</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="AssosatedCard">Assosiated Card</label>
+                                    <select asp-for="AssosatedCard">
+                                        <option value="Select">---Select an Option---</option>
+                                        <option value="@eBM_System.Models.DB_Models.TransactionType.Debit">Debit</option>
+                                        <option value="@eBM_System.Models.DB_Models.TransactionType.Credit">Credit</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="CardNumber">Card Number</label>
+                                    <input type="number" class="form-control" asp-for="CardNumber" placeholder="Card Number" maxlength="16" >
+                                </div>
+                                <button type="submit" class="btn btn-primary me-2">Update</button>
+                                <button type="button" class="btn btn-light" onclick="window.location.href='../Transaction/Index';">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="pageStatus" value="@returnStat" style="display:none" />
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(window).on('load', function () {
+        var stat = $("#pageStatus").val();
+        if (stat == "success") {
+            alert("Account info added successfully.");
+            window.location.href = '../Transaction/Index';
+        }
+        else if (stat == "failed") {
+            alert("Failed to add account info.");
+        }
+        else if (stat == "error") {
+            alert("Error while adding Account Info.");
+        }
+    });
+</script>

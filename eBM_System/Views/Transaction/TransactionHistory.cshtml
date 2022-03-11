@@ -1,0 +1,202 @@
+﻿@model List<eBM_System.Models.ViewModels.TransactionHistory_VM>
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var role = ViewBag.Role;
+}
+
+
+<head>
+    <link rel="stylesheet" href="~/assets/vendors/feather/feather.css">
+    <link rel="stylesheet" href="~/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="~/assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="~/assets/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="~/assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="~/assets/css/vertical-layout-light/style.css">
+    <link rel="shortcut icon" href="~/assets/images/favicon.png" />
+</head>
+
+
+
+<button type="button" class=" col-md-2 btn btn-success btn-icon-text" onclick="window.location.href='../Transaction/AddTransaction'">
+    <i class="icon-md mdi mdi-database-plus"></i>
+    Add Tranaction History
+</button>
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-lg-5 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Transaction History List</h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th hidden>ID</th>
+                                        @if (role == "Admin")
+                                        {
+                                            <th>User Name</th>
+                                        }
+
+                                        <th>Transaction ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="TransactionHistoryTable">
+                                    @foreach (var c in Model)
+                                    {
+                                        <tr>
+                                            <td hidden>@c.Id</td>
+                                            @if (role == "Admin")
+                                            {
+                                                <td>@c.UserName</td>
+                                            }
+                                            <td>
+                                                <button id="btnGetTransactionData" type="button" class="btn btn-outline-primary btn-icon-text">
+                                                    @c.TransactionId
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Transaction Detail</h4>
+                        <div class="row">
+                            <input type="text" id="TH_id" hidden/>
+                            <div class="col-md-6">
+                                <p>Transaction ID : </p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong id="transactionID"> </strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Transaction Type : </p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong id="transactionType"> </strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Transaction Time : </p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong id="transactionTime"> </strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Amount : </p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong id="transactionAmount"> </strong>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="text-center">
+                                <button id="btnEditTransaction" hidden type="button" class="btn btn-outline-primary btn-icon-text">
+                                    <i class="mdi mdi-grease-pencil"></i>
+                                    Edit
+                                </button>
+                                <button id="btnRemoveTransaction" hidden type="button" class="btn btn-outline-danger btn-icon-text">
+                                    <i class=" mdi mdi-close-circle-outline"></i>
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/vendors/js/vendor.bundle.base.js"></script>
+<script src="~/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/off-canvas.js"></script>
+<script src="~/assets/js/hoverable-collapse.js"></script>
+<script src="~/assets/js/template.js"></script>
+<script src="~/assets/js/settings.js"></script>
+<script src="~/assets/js/todolist.js"></script>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+
+
+    $("#TransactionHistoryTable").on('click', '#btnGetTransactionData', function () {
+        var transcationId = $.trim($(this).closest('tr').find("td:eq(0)").text());
+        $.ajax({
+            type: 'POST',
+            url: '../Transaction/GetTransactionData',
+            data: {
+                'transcationId': transcationId
+            },
+            success: function (data) {
+                if (data != null) {
+                    $("#TH_id").val(transcationId);
+                    $("#btnEditTransaction").prop('hidden', false);
+                    $("#btnRemoveTransaction").prop('hidden', false);
+                    $("#transactionID").text(data.transactionID);
+                    $("#transactionType").text(data.transactionType);
+                    $("#transactionTime").text(data.transactionTime);
+                    $("#transactionAmount").text(data.transactionAmount);
+                }
+                else {
+                    alert("Error while getting transaction data.");
+                }
+            },
+            error: function () {
+                alert("Error while getting transaction data.");
+            }
+        });
+    });
+
+    $("#btnEditTransaction").on('click', function () {
+        var transactionId = $("#TH_id").val();
+        window.location.href = '../Transaction/EditTransaction?id=' + transactionId;
+    });
+
+    $("#btnRemoveTransaction").on('click', function () {
+        var transactionId = $("#TH_id").val();
+        $.ajax({
+            type: 'POST',
+            url: '../Transaction/RemoveTransaction',
+            data: {
+                'transactionId': transactionId
+            },
+            success: function (data) {
+                if (data == "success") {
+                    alert("Transaction removed successfully.");
+                    window.location.href = '../Transaction/TransactionHistory';
+                }
+                else if (data == "failed") {
+                    alert("Failed to remove Transaction data.");
+                }
+                else if (data == "error") {
+                    alert("Error while removing Transaction data.");
+                }
+            },
+            error: function () {
+                alert("Error while removing Transaction data.");
+            }
+        });
+    });
+
+</script>

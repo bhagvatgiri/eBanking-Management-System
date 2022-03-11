@@ -1,0 +1,68 @@
+﻿@model eBM_System.Models.ViewModels.RegisterUserVM
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnStat = ViewBag.ResultStatus;
+}
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add Customer</h4>
+                        <form class="forms-sample" enctype="multipart/form-data" asp-action="CreateCustomer" asp-controller="Account" method="post">
+                            <div asp-validation-summary="All" class="text-danger">
+                                <div class="form-group col-md-6">
+                                    <label asp-for="FirstName">FirstName</label>
+                                    <input type="text" class="form-control" asp-for="FirstName" placeholder="First Name">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="LastName">Last Name</label>
+                                    <input type="text" class="form-control" asp-for="LastName" placeholder="Last Name">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="Email">Email</label>
+                                    <input type="email" class="form-control" asp-for="Email" placeholder="Email">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="Password">Password</label>
+                                    <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="ConfirmPassword">Password</label>
+                                    <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Password">
+                                </div>
+                                <button type="submit" class="btn btn-primary me-2">Update</button>
+                                <button type="button" class="btn btn-light" onclick="window.location.href='../Account/AllUsers';">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="pageStatus" value="@returnStat" style="display:none" />
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(window).on('load', function () {
+        var stat = $("#pageStatus").val();
+        if (stat == "success") {
+            alert("User Created Successfully.");
+            window.location.href = '../Account/AllUsers';
+        }
+        else if (stat == "failed") {
+            alert("Failed to create User.");
+        }
+        else if (stat == "error") {
+            alert("Error while creating user.");
+        }
+    });
+</script>

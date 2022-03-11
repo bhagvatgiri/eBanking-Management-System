@@ -1,0 +1,84 @@
+﻿@model TransactionHistory_VM
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnStat = ViewBag.ResultStatus;
+    var role = ViewBag.Role;
+}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add Transaction</h4>
+                        <form class="forms-sample" enctype="multipart/form-data" asp-action="AddTransaction" asp-controller="Transaction" method="post">
+                            <div asp-validation-summary="All" class="text-danger">
+                                <input asp-for="UserId" id="UserId" type="text" hidden />
+                                <div class="form-group col-md-6">
+                                    <label asp-for="Amount">Amount</label>
+                                    <input type="number" class="form-control" asp-for="Amount" min="0" placeholder="Amount">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label asp-for="TransactionType">Transction Type</label>
+                                    <select asp-for="TransactionType">
+                                        <option selected value="Select">---Select an Option---</option>
+                                        <option value="@eBM_System.Models.DB_Models.TransactionType.Debit">Debit</option>
+                                        <option value="@eBM_System.Models.DB_Models.TransactionType.Credit">Credit</option>
+                                    </select>
+                                </div>
+                                @if (role == "Admin")
+                                {
+                                    <div class="form-group col-md-6">
+                                        <label asp-for="UserName">Select User</label>
+                                        <select id="userChange">
+                                            <option value="Select">---Select an Option---</option>
+                                            @foreach (var u in Model.UserList)
+                                            {
+                                                <option value="@u.Id">@u.FirstName @u.LastName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                                <button type="submit" class="btn btn-primary me-2">Add</button>
+                                <button type="button" class="btn btn-light" onclick="window.location.href='../Transaction/TransactionHistory';">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="pageStatus" value="@returnStat" style="display:none" />
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(window).on('load', function () {
+        var stat = $("#pageStatus").val();
+        if (stat == "success") {
+            alert("Transaction info added successfully.");
+            window.location.href = '../Transaction/TransactionHistory';
+        }
+        else if (stat == "failed") {
+            alert("Failed to add Transaction info.");
+        }
+        else if (stat == "error") {
+            alert("Error while adding Transaction Info.");
+        }
+    });
+
+    $("#userChange").change(function () {
+        var uid = $(this).val();
+        if (uid != "Select") {
+            $("#UserId").val($(this).val());
+        }
+        else {
+            $("#UserId").val("");
+        }
+    });
+
+</script>
